@@ -1,35 +1,74 @@
 import icons from 'url:../../img/icons.svg';
-import {Fraction} from 'fractional';
+import { Fraction } from 'fractional';
 
 class RecipeView {
-  _parentElement = document.querySelector('.recipe')
-  _data
+  _parentElement = document.querySelector('.recipe');
+  _data;
+  #Errormessage = 'No recipes found for your query. Please try again!';
+  #message = '';
 
-  render(data){
-      this._data = data
-      const markup = this._generateMarkup()
-      this._clear();
-      this._parentElement.insertAdjacentHTML('afterbegin',markup)
+  render(data) {
+    this._data = data;
+    const markup = this._generateMarkup();
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
-  _clear(){
+  _clear() {
     this._parentElement.innerHTML = '';
   }
 
-  renderSpier = function(){
+  addHandlerRender(handler) {
+    ['hashchange', 'load'].forEach(event =>
+      window.addEventListener(event, handler)
+    );
+  }
+
+
+
+  renderError(message = this.#Errormessage) {
+    const markup = `
+     <div class="error">
+     <div>
+       <svg>
+         <use href="${icons}#icon-alert-triangle"></use>
+       </svg>
+     </div>
+     <p>${message}</p>
+   </div>     
+     `;
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  renderMessage(message = this.#message){
+    const markup = `
+     <div class="message">
+     <div>
+       <svg>
+         <use href="${icons}#icon-smile"></use>
+       </svg>
+     </div>
+     <p>${message}</p>
+   </div>     
+     `;
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  renderSpier = function () {
     const markup = `
     <div class="spinner">
        <svg>
          <use href="${icons}#icon-loader"></use>
        </svg>
     </div>
-    `
+    `;
     this._parentElement.innerHTML = '';
-    this._parentElement.insertAdjacentHTML('afterbegin', markup)
-  }
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
+  };
 
-  _generateMarkup(){
-    
+  _generateMarkup() {
     return `
    <figure class="recipe__fig">
    <img src="${this._data.image}" alt="Tomato" class="recipe__img" />
@@ -43,14 +82,18 @@ class RecipeView {
      <svg class="recipe__info-icon">
        <use href="${icons}#icon-clock"></use>
      </svg>
-     <span class="recipe__info-data recipe__info-data--minutes">${this._data.cookingTime}</span>
+     <span class="recipe__info-data recipe__info-data--minutes">${
+       this._data.cookingTime
+     }</span>
      <span class="recipe__info-text">minutes</span>
    </div>
    <div class="recipe__info">
      <svg class="recipe__info-icon">
        <use href="${icons}#icon-users"></use>
      </svg>
-     <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
+     <span class="recipe__info-data recipe__info-data--people">${
+       this._data.servings
+     }</span>
      <span class="recipe__info-text">servings</span>
 
      <div class="recipe__info-buttons">
@@ -91,7 +134,9 @@ class RecipeView {
    <h2 class="heading--2">How to cook it</h2>
    <p class="recipe__directions-text">
      This recipe was carefully designed and tested by
-     <span class="recipe__publisher">${this._data.publisher}</span>. Please check out
+     <span class="recipe__publisher">${
+       this._data.publisher
+     }</span>. Please check out
      directions at their website.
    </p>
    <a
@@ -105,23 +150,25 @@ class RecipeView {
      </svg>
    </a>
  </div>
-   `
+   `;
   }
 
-  #generateMarkupIngredient(ing){
-        return `
+  #generateMarkupIngredient(ing) {
+    return `
         <li class="recipe__ingredient">
         <svg class="recipe__icon">
           <use href="${icons}#icon-check"></use>
         </svg>
-        <div class="recipe__quantity">${ing.quantity ? new Fraction(ing.quantity).toString() : ''}</div>
+        <div class="recipe__quantity">${
+          ing.quantity ? new Fraction(ing.quantity).toString() : ''
+        }</div>
         <div class="recipe__description">
           <span class="recipe__unit">${ing.unit}</span>
           ${ing.description}
         </div>
       </li>         
-        `
-    }
+        `;
+  }
 }
 
-export default new RecipeView()
+export default new RecipeView();
